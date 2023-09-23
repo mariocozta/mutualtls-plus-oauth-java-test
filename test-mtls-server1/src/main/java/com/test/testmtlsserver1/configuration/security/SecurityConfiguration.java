@@ -55,33 +55,18 @@ public class SecurityConfiguration {
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.NEVER);
-
-    //.userDetailsService(userDetailsService());
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                if (username.equals("localhost")) {
-                    return new User(username, "",
-                            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
-                }
-                throw new UsernameNotFoundException("User not found!");
-            }
-        };
-    }
 
     @Bean
     public SecurityFilterChain oauthFilterChain(HttpSecurity http) throws Exception {
         http
-            .antMatcher("/testOauth/**") //PREVENT COOKIES AND SESSION IDS FROM INTERVEENING IN THIS!!!
+            .antMatcher("/testOauth/**") //PREVENT COOKIES AND SESSION IDS FROM INTERVENING IN THIS!!!
             .authorizeRequests(authorize ->{
                     authorize
                             .antMatchers(HttpMethod.GET,"/testOauth/protected").authenticated()
-                            .mvcMatchers(HttpMethod.GET,"/testOauth/notProtected").permitAll()// Secure these endpoints with OAuth2
+                            .mvcMatchers(HttpMethod.GET,"/testOauth/notProtected").permitAll()
                             .anyRequest().authenticated();
             })
             .oauth2ResourceServer(
@@ -97,12 +82,6 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-
-    @Bean("CurrentUser")
-    public Supplier<JwtAuthenticationToken> currentUser() {
-        return () -> (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-    }
-
     private JwtIssuerAuthenticationManagerResolver getJwtIssuerAuthenticationManagerResolver() {
         Map<String, AuthenticationManager> managers = providersProperty.getProviders()
                 .values()
@@ -114,5 +93,3 @@ public class SecurityConfiguration {
     }
 
 }
-
-//                                .mvcMatchers(HttpMethod.GET, "/test**").permitAll()
