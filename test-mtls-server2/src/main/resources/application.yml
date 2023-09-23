@@ -1,0 +1,13 @@
+server:
+  servlet:
+    context-path: /api
+  port: 5011
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
+      springframework.security: TRACE

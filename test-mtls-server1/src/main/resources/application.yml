@@ -1,0 +1,27 @@
+server:
+  servlet:
+    context-path: /api
+  port: 5010
+  ssl:
+    enabled: true
+    key-store: "classpath:keystore.p12"
+    key-store-password: changeit
+    key-store-type: PKCS12
+    trust-store: "classpath:truststore.p12"
+    trust-store-password: changeit
+    trust-store-type: PKCS12
+    client-auth: want
+oauth:
+  providers:
+    keycloak:
+      key: keycloak
+      jwk-set-uri: http://localhost:8180/auth/realms/your-realm/protocol/openid-connect/certs
+      issuer-uri: http://localhost:8180/auth/realms/your-realm
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
+      springframework.security: DEBUG
