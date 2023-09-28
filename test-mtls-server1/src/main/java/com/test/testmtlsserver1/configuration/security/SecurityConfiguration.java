@@ -45,19 +45,32 @@ public class SecurityConfiguration {
     @Order(1)
     public SecurityFilterChain mtlsSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .antMatcher("/testMtls/**") //PREVENT COOKIES AND SESSION IDS FROM INTERVEENING IN THIS!!!
+            .antMatcher("/testMtls/**") //PREVENT COOKIES AND SESSION IDS FROM INTERVENING IN THIS!!!
             .authorizeRequests(authorizeRequests ->
                     authorizeRequests
                             .antMatchers(HttpMethod.GET,"/testMtls/protected").authenticated()
                             .antMatchers(HttpMethod.GET,"/testMtls/notProtected").permitAll()
             )
-            .x509()
+            .x509().userDetailsService(userDetailsService())
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.NEVER);
         return http.build();
     }
 
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                if (username.equals("localhost")) {
+                    return new User(username, "",
+                            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
+                }
+                throw new UsernameNotFoundException("User not found!");
+            }
+        };
+    }
 
     @Bean
     public SecurityFilterChain oauthFilterChain(HttpSecurity http) throws Exception {

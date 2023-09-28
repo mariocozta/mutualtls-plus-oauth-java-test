@@ -4,7 +4,7 @@ server:
   port: 5010
   ssl:
     enabled: true
-    key-store: "classpath:keystore.p12"
+    key-store: "classpath:serverkeystore.p12"
     key-store-password: changeit
     key-store-type: PKCS12
     trust-store: "classpath:truststore.p12"
